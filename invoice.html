@@ -118,9 +118,15 @@
     .meta-table td { padding: 3px 8px; text-align: right; }
     .meta-label { font-weight: 600; color: #64748b; }
 
-    /* Table Styling */
-    table.invoice-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 11px; table-layout: fixed; }
-    .invoice-table th { 
+    /* Unified Master Table Styling */
+    table.master-table { 
+      width: 100%; 
+      border-collapse: collapse; 
+      font-size: 11px; 
+      table-layout: fixed; 
+    }
+    
+    .master-table th { 
       background-color: #0f172a !important; 
       color: #ffffff !important; 
       padding: 8px 10px; 
@@ -130,14 +136,81 @@
       letter-spacing: 0.5px; 
       text-align: center; 
     }
-    .invoice-table th.left, .invoice-table td.left { text-align: left; }
-    .invoice-table td { padding: 10px 8px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; color: #0f172a; text-align: center; }
+    
+    .master-table th.left { text-align: left; }
+    .master-table th.amount-header { text-align: right; padding-right: 15px; }
+    
+    .master-table td { 
+      padding: 8px 10px; 
+      vertical-align: middle; 
+      color: #0f172a; 
+      text-align: center; 
+    }
+
+    .item-row td {
+      border-bottom: 1px solid #f1f5f9;
+    }
     
     .btn-del { background: #ef4444; color: white; border: none; padding: 2px 6px; border-radius: 3px; font-size: 9px; cursor: pointer; display: none; }
-    .invoice-table tr:hover .btn-del { display: inline-block; }
+    .item-row:hover .btn-del { display: inline-block; }
 
-    /* In-table Add Button */
-    .add-row-wrapper { margin-bottom: 20px; }
+    /* Inputs Styling */
+    .num-in { 
+      border: none; 
+      background: transparent; 
+      font-family: 'Courier New', Courier, monospace !important; 
+      font-size: 11px !important; 
+      font-weight: 600 !important;
+      outline: none; 
+      text-align: right; 
+      border-bottom: 1px dashed #94a3b8; 
+      padding: 0;
+      margin: 0;
+      line-height: normal;
+    }
+    
+    .qty-input { width: 100%; max-width: 60px; text-align: center; }
+    .price-input { width: 100%; text-align: right; }
+
+    /* Strict Right Alignment Cell Layout */
+    .amount-cell {
+      text-align: right !important;
+      font-family: 'Courier New', Courier, monospace;
+      font-weight: 600;
+      font-size: 11px;
+      padding-right: 15px !important;
+    }
+
+    .amount-flex {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .amount-val {
+      display: inline-block;
+      min-width: 60px;
+      text-align: right;
+      font-size: 11px !important;
+      font-family: 'Courier New', Courier, monospace !important;
+      font-weight: 600;
+    }
+
+    .amount-unit {
+      display: inline-block;
+      width: 30px;
+      text-align: right;
+      font-size: 11px !important;
+      font-family: 'Courier New', Courier, monospace !important;
+      font-weight: 600;
+    }
+
+    /* Add Row Button Area */
+    .add-row-container {
+      padding: 10px 0 20px 0;
+    }
+
     .btn-table-add {
       background: #f1f5f9;
       color: #0f172a;
@@ -152,39 +225,10 @@
       align-items: center;
       gap: 5px;
     }
-    .btn-table-add:hover {
-      background: #e2e8f0;
-      border-color: #94a3b8;
-    }
+    .btn-table-add:hover { background: #e2e8f0; border-color: #94a3b8; }
 
-    /* Inputs Alignment */
-    .num-in { 
-      border: none; 
-      background: transparent; 
-      font-family: 'Courier New', Courier, monospace; 
-      font-size: 11px; 
-      font-weight: 600;
-      outline: none; 
-      text-align: center;
-      border-bottom: 1px dashed #94a3b8; 
-    }
-    
-    .qty-input { width: 100%; max-width: 60px; }
-    .price-input { width: 100%; max-width: 100px; }
-
-    .amount-cell {
-      font-family: 'Courier New', Courier, monospace;
-      font-weight: 600;
-      text-align: center;
-      white-space: nowrap;
-    }
-
-    /* Bottom Section Layout */
-    .bottom-layout { display: flex; justify-content: space-between; margin-top: 15px; align-items: flex-start; }
-    
-    /* Styled Payment Instructions Box */
+    /* Payment Box inside Table cell */
     .payment-instructions { 
-      width: 46%; 
       font-size: 11px; 
       color: #475569; 
       line-height: 1.6;
@@ -192,39 +236,34 @@
       padding: 12px 15px;
       border-radius: 6px;
       border: 1px solid #e2e8f0;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+      text-align: left;
     }
     .payment-title { font-weight: 700; color: #0f172a; margin-bottom: 6px; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; }
     .bank-details { font-size: 11px; color: #1e293b; }
 
-    .totals-area { width: 48%; }
-    .totals-table { width: 100%; border-collapse: collapse; font-size: 11px; }
-    .totals-table td { padding: 6px 4px; }
-    .t-label { font-weight: 600; color: #64748b; text-align: left; width: 40%; }
-    .t-val { font-weight: 600; color: #0f172a; font-family: 'Courier New', Courier, monospace; width: 60%; }
+    /* Totals Styling */
+    .t-label { font-weight: 600; color: #64748b; text-align: left; font-size: 11px; }
     
-    /* Strict Column Alignment Layout */
-    .val-grid {
-      display: grid;
-      grid-template-columns: 1fr 35px;
-      align-items: center;
-      text-align: center;
-    }
-    .val-grid span.unit {
-      text-align: right;
+    .grand-row .t-label, .grand-row .amount-cell { font-size: 11px; font-weight: 700; color: #2563eb; }
+    .grand-row td { border-top: 1px solid #cbd5e1; }
+    
+    .paid-row .t-label, .paid-row .amount-cell { font-weight: 700; color: #16a34a; }
+    .paid-row input { 
+      color: #16a34a !important; 
+      font-weight: 700 !important; 
+      font-size: 11px !important; 
+      font-family: 'Courier New', Courier, monospace !important;
+      width: 100% !important;
+      max-width: 80px !important;
     }
 
-    .grand-row td { font-size: 12px; font-weight: 700; color: #2563eb; border-top: 1px solid #cbd5e1; padding-top: 6px; }
-    .balance-row td { font-weight: 700; color: #dc2626; }
+    .balance-row .t-label, .balance-row .amount-cell { font-weight: 700; color: #dc2626; font-size: 11px; }
 
-    /* Print Rules Fix for Preserving Colors */
+    /* Print Rules */
     @media print {
-      * {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-      }
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
       body { background: white; padding: 0; }
-      .action-controls, .btn-del, .add-row-wrapper { display: none !important; }
+      .action-controls, .btn-del, .add-row-container { display: none !important; }
       .invoice-card { box-shadow: none; padding: 0; width: 100%; max-width: 100%; }
       .num-in, [contenteditable="true"] { border-bottom: none !important; }
       .payment-instructions { background: #f8fafc !important; border: 1px solid #e2e8f0; }
@@ -289,95 +328,117 @@
       </div>
     </div>
 
-    <!-- Items Table -->
-    <table class="invoice-table">
+    <!-- Unified Master Table -->
+    <table class="master-table">
       <thead>
         <tr>
-          <th class="left" style="width: 40%;">Description</th>
-          <th style="width: 15%;">Quantity</th>
-          <th style="width: 20%;">Unit price</th>
-          <th style="width: 21%;">Amount</th>
+          <th class="left" style="width: 44%;">DESCRIPTION</th>
+          <th style="width: 13%;">QUANTITY</th>
+          <th style="width: 17%;">UNIT PRICE</th>
+          <th class="amount-header" style="width: 22%;">AMOUNT</th>
           <th style="width: 4%;"></th>
         </tr>
       </thead>
+      
+      <!-- Items Section -->
       <tbody id="tableBody">
-        <tr>
+        <tr class="item-row">
           <td class="left" contenteditable="true"></td>
           <td><input type="number" class="num-in qty-input qty" value="" oninput="calculate()"></td>
           <td><input type="number" class="num-in price-input price" value="" oninput="calculate()"></td>
-          <td class="amount-cell row-amount">0 BDT</td>
+          <td class="amount-cell">
+            <div class="amount-flex">
+              <span class="row-amount amount-val">0</span>
+              <span class="amount-unit">BDT</span>
+            </div>
+          </td>
           <td><button class="btn-del" onclick="removeRow(this)">X</button></td>
         </tr>
       </tbody>
+
+      <!-- Add Row Action Button Cell -->
+      <tbody>
+        <tr>
+          <td colspan="5" class="left add-row-container">
+            <button class="btn-table-add" onclick="addRow()">➕ Add Item</button>
+          </td>
+        </tr>
+      </tbody>
+
+      <!-- Footer Totals & Payment Instructions -->
+      <tbody>
+        <!-- Subtotal -->
+        <tr>
+          <td colspan="2" rowspan="5" style="vertical-align: top; padding-right: 20px;" class="left">
+            <div class="payment-instructions">
+              <div class="payment-title">Payment Instructions</div>
+              <div class="bank-details" contenteditable="true">
+                <strong>Bank Name:</strong> BRAC Bank Limited<br>
+                <strong>Account Name:</strong> Golder Tours & Travels<br>
+                <strong>Account No:</strong> 01716151881819<br>
+                <strong>Branch:</strong> Mirpur Branch, Dhaka
+              </div>
+            </div>
+          </td>
+          <td class="t-label">SUBTOTAL:</td>
+          <td class="amount-cell">
+            <div class="amount-flex">
+              <span id="subtotalNum" class="amount-val">0</span>
+              <span class="amount-unit">BDT</span>
+            </div>
+          </td>
+          <td></td>
+        </tr>
+
+        <!-- Tax -->
+        <tr>
+          <td class="t-label">TAX (%):</td>
+          <td class="amount-cell">
+            <div class="amount-flex">
+              <input type="number" class="num-in price-input" id="taxInput" value="" oninput="calculate()" style="width: 60px;">
+              <span class="amount-unit">%</span>
+            </div>
+          </td>
+          <td></td>
+        </tr>
+
+        <!-- Total -->
+        <tr class="grand-row">
+          <td class="t-label">TOTAL:</td>
+          <td class="amount-cell">
+            <div class="amount-flex">
+              <span id="totalNum" class="amount-val">0</span>
+              <span class="amount-unit">BDT</span>
+            </div>
+          </td>
+          <td></td>
+        </tr>
+
+        <!-- Paid Row -->
+        <tr class="paid-row">
+          <td class="t-label">PAID:</td>
+          <td class="amount-cell">
+            <div class="amount-flex">
+              <input type="text" class="num-in price-input" id="paidInput" value="" oninput="handlePaidInput()">
+              <span class="amount-unit">BDT</span>
+            </div>
+          </td>
+          <td></td>
+        </tr>
+
+        <!-- Due Row (Updated label) -->
+        <tr class="balance-row">
+          <td class="t-label">DUE:</td>
+          <td class="amount-cell">
+            <div class="amount-flex">
+              <span id="balanceNum" class="amount-val">0</span>
+              <span class="amount-unit">BDT</span>
+            </div>
+          </td>
+          <td></td>
+        </tr>
+      </tbody>
     </table>
-
-    <!-- Add Item Button -->
-    <div class="add-row-wrapper">
-      <button class="btn-table-add" onclick="addRow()">➕ Add Item</button>
-    </div>
-
-    <!-- Footer Payment Instructions Box & Totals -->
-    <div class="bottom-layout">
-      <div class="payment-instructions">
-        <div class="payment-title">Payment Instructions</div>
-        <div class="bank-details" contenteditable="true">
-          <strong>Bank Name:</strong> BRAC Bank Limited<br>
-          <strong>Account Name:</strong> Golder Tours & Travels<br>
-          <strong>Account No:</strong> 01716151881819<br>
-          <strong>Branch:</strong> Mirpur Branch, Dhaka
-        </div>
-      </div>
-
-      <div class="totals-area">
-        <table class="totals-table">
-          <tr>
-            <td class="t-label">SUBTOTAL:</td>
-            <td class="t-val">
-              <div class="val-grid">
-                <span id="subtotalNum">0</span>
-                <span class="unit">BDT</span>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td class="t-label">TAX (%):</td>
-            <td class="t-val">
-              <div class="val-grid">
-                <input type="number" class="num-in price-input" id="taxInput" value="" oninput="calculate()" style="width: 100%;">
-                <span class="unit">%</span>
-              </div>
-            </td>
-          </tr>
-          <tr class="grand-row">
-            <td class="t-label">TOTAL:</td>
-            <td class="t-val">
-              <div class="val-grid">
-                <span id="totalNum">0</span>
-                <span class="unit">BDT</span>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td class="t-label">PAID:</td>
-            <td class="t-val">
-              <div class="val-grid">
-                <input type="text" class="num-in price-input" id="paidInput" value="" oninput="handlePaidInput()" style="width: 100%; text-align: center;">
-                <span class="unit">BDT</span>
-              </div>
-            </td>
-          </tr>
-          <tr class="balance-row">
-            <td class="t-label">BALANCE DUE:</td>
-            <td class="t-val">
-              <div class="val-grid">
-                <span id="balanceNum">0</span>
-                <span class="unit">BDT</span>
-              </div>
-            </td>
-          </tr>
-        </table>
-      </div>
-    </div>
 
   </div>
 
@@ -410,7 +471,7 @@
     }
 
     function calculate() {
-      const rows = document.querySelectorAll('#tableBody tr');
+      const rows = document.querySelectorAll('#tableBody .item-row');
       let subtotal = 0;
 
       rows.forEach(row => {
@@ -418,7 +479,7 @@
         const price = parseFloat(row.querySelector('.price').value) || 0;
         
         const rowAmount = qty * price;
-        row.querySelector('.row-amount').textContent = formatCurrency(rowAmount) + ' BDT';
+        row.querySelector('.row-amount').textContent = formatCurrency(rowAmount);
         
         subtotal += rowAmount;
       });
@@ -440,11 +501,17 @@
     function addRow() {
       const tbody = document.getElementById('tableBody');
       const tr = document.createElement('tr');
+      tr.className = 'item-row';
       tr.innerHTML = `
         <td class="left" contenteditable="true"></td>
         <td><input type="number" class="num-in qty-input qty" value="" oninput="calculate()"></td>
         <td><input type="number" class="num-in price-input price" value="" oninput="calculate()"></td>
-        <td class="amount-cell row-amount">0 BDT</td>
+        <td class="amount-cell">
+          <div class="amount-flex">
+            <span class="row-amount amount-val">0</span>
+            <span class="amount-unit">BDT</span>
+          </div>
+        </td>
         <td><button class="btn-del" onclick="removeRow(this)">X</button></td>
       `;
       tbody.appendChild(tr);
