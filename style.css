@@ -28,7 +28,6 @@ body {
     margin: auto;
 }
 
-/* Header & Navbar */
 header {
     background: #ffffff;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
@@ -69,7 +68,6 @@ nav ul li a:hover, nav ul li a.active-link {
     color: var(--ocean-blue);
 }
 
-/* Hero Section */
 .hero {
     position: relative;
     background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
@@ -110,7 +108,6 @@ nav ul li a:hover, nav ul li a.active-link {
     letter-spacing: 2px;
 }
 
-/* Projects Section Styling */
 .projects {
     padding: 60px 0 80px 0;
     flex: 1;
@@ -126,7 +123,6 @@ nav ul li a:hover, nav ul li a.active-link {
     color: var(--sunset-orange);
 }
 
-/* Project Cards Grid */
 .project-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -175,7 +171,6 @@ nav ul li a:hover, nav ul li a.active-link {
     color: var(--primary-green);
 }
 
-/* Footer */
 footer {
     background: var(--dark-color);
     color: white;

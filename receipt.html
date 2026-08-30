@@ -8,52 +8,42 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body { background: #f4f9f9; padding: 20px; color: #1e272e; }
-        
         .container { max-width: 800px; margin: 0 auto; }
-        
-        /* Form Styling (Hidden when printing) */
         .form-section { background: #ffffff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 30px; }
         .form-section h2 { margin-bottom: 20px; color: #00a8cc; font-size: 1.5rem; }
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
         .form-group { display: flex; flex-direction: column; }
         .form-group label { font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; }
         .form-group input, .form-group select { padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.9rem; }
-        
         .btn-generate { background: #00a8cc; color: #fff; border: none; padding: 12px 25px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.3s; }
         .btn-generate:hover { background: #2d7a42; }
-
-        /* Receipt Printable Area */
         .receipt-card { background: #ffffff; padding: 40px; border-radius: 12px; border: 2px solid #00a8cc; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative; }
-        .receipt-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #00a8cc; padding-bottom: 15px; margin-bottom: 20px; }
-        .receipt-header img { height: 60px; }
+        .receipt-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #00a8cc; padding-bottom: 20px; margin-bottom: 25px; background: #ffffff; }
+        .logo-container { background: #ffffff; padding: 5px; display: flex; align-items: center; }
+        .logo-container img { height: 70px; width: auto; object-fit: contain; }
         .receipt-title { text-align: right; }
-        .receipt-title h1 { font-size: 1.6rem; color: #ff7e37; }
-        .receipt-title p { font-size: 0.8rem; color: #666; }
-
+        .receipt-title h1 { font-size: 1.8rem; color: #ff7e37; font-weight: 700; letter-spacing: 1px; }
+        .receipt-title p { font-size: 0.85rem; color: #2d7a42; font-weight: 600; }
         .receipt-meta { display: flex; justify-content: space-between; margin-bottom: 25px; font-size: 0.9rem; }
-        
+        .receipt-meta p { margin-bottom: 4px; }
         .receipt-table { width: 100%; border-collapse: collapse; margin-bottom: 25px; }
         .receipt-table th, .receipt-table td { border: 1px solid #ddd; padding: 12px; text-align: left; font-size: 0.9rem; }
-        .receipt-table th { background: #f4f9f9; color: #00a8cc; }
-
-        .receipt-footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 50px; }
-        .signature-box { text-align: center; border-top: 1px solid #000; width: 180px; padding-top: 5px; font-size: 0.85rem; }
-
-        .actions { margin-top: 20px; text-align: center; }
-        .btn-print { background: #2d7a42; color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: 600; cursor: pointer; font-size: 1rem; }
-
-        /* Print Media Rule */
+        .receipt-table th { background: #f8f9fa; color: #00a8cc; font-weight: 600; }
+        .receipt-footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 60px; }
+        .signature-box { text-align: center; border-top: 1px solid #000; width: 180px; padding-top: 5px; font-size: 0.85rem; font-weight: 600; }
+        .actions { margin-top: 25px; text-align: center; }
+        .btn-print { background: #2d7a42; color: white; border: none; padding: 12px 35px; border-radius: 25px; font-weight: 600; cursor: pointer; font-size: 1rem; transition: 0.3s; }
+        .btn-print:hover { background: #00a8cc; }
         @media print {
             body { background: white; padding: 0; }
             .form-section, .actions, header, footer { display: none !important; }
-            .receipt-card { border: 1px solid #000; box-shadow: none; width: 100%; }
+            .receipt-card { border: 1px solid #000; box-shadow: none; width: 100%; padding: 30px; }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- Input Form Section -->
     <div class="form-section">
         <h2>Money Receipt Generator</h2>
         <div class="form-grid">
@@ -93,13 +83,14 @@
         <button class="btn-generate" onclick="generateReceipt()">Update Receipt</button>
     </div>
 
-    <!-- Generated Receipt Area -->
     <div class="receipt-card" id="receipt">
         <div class="receipt-header">
-            <img src="logo.png" alt="Golder Tours & Travels" onerror="this.src='https://via.placeholder.com/150x60?text=GOLDER+LOGO'">
+            <div class="logo-container">
+                <img src="logo.png" alt="Golder Tours & Travels Logo">
+            </div>
             <div class="receipt-title">
                 <h1>MONEY RECEIPT</h1>
-                <p>Golder Tours & Travels</p>
+                <p>Personal / Official Record</p>
             </div>
         </div>
 
@@ -119,13 +110,13 @@
             <thead>
                 <tr>
                     <th>Description / Details</th>
-                    <th style="text-align: right; width: 150px;">Amount (BDT)</th>
+                    <th style="text-align: right; width: 160px;">Amount (BDT)</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td id="outDetails">Advance Payment for Tour Package</td>
-                    <td style="text-align: right; font-weight: bold;" id="outAmount">0.00</td>
+                    <td style="text-align: right; font-weight: bold;" id="outAmount">0.00 TK</td>
                 </tr>
             </tbody>
         </table>
@@ -136,14 +127,12 @@
         </div>
     </div>
 
-    <!-- Action Button -->
     <div class="actions">
         <button class="btn-print" onclick="window.print()">Print / Save PDF</button>
     </div>
 </div>
 
 <script>
-    // Set Today's Date Default
     document.getElementById('inDate').valueAsDate = new Date();
 
     function generateReceipt() {

@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hotel Request Generator - Golder Tours & Travels</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background-color: #f1f5f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    /* Top Control & Option Tabs */
+    .controls-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .request-type-toggle {
+      display: flex;
+      background-color: #e2e8f0;
+      padding: 4px;
+      border-radius: 8px;
+      gap: 4px;
+    }
+
+    .toggle-btn {
+      border: none;
+      background: transparent;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      color: #475569;
+      transition: 0.2s;
+    }
+
+    .toggle-btn.active {
+      background-color: #2563eb;
+      color: white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .btn-print {
+      background-color: #0f172a;
+      color: white;
+      border: none;
+      padding: 8px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      transition: 0.2s;
+    }
+
+    .btn-print:hover {
+      background-color: #1e293b;
+    }
+
+    /* Compact Voucher Container */
+    .hotel-card {
+      width: 100%;
+      max-width: 400px;
+      background-color: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      padding: 16px;
+      color: #1e293b;
+    }
+
+    /* Header & Logo */
+    .card-header {
+      border-bottom: 2px solid #0f172a;
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo-container img {
+      height: 45px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .doc-type {
+      font-size: 10px;
+      background-color: #0f172a;
+      color: #ffffff;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    /* Editable Fields */
+    [contenteditable="true"] {
+      border-bottom: 1px dashed #94a3b8;
+      outline: none;
+      padding: 1px 3px;
+      transition: background 0.2s;
+    }
+
+    [contenteditable="true"]:focus {
+      background-color: #fef08a;
+      border-bottom: 1px solid #2563eb;
+    }
+
+    /* Hotel & Rating Section */
+    .hotel-name-box {
+      margin-bottom: 12px;
+      background-color: #f8fafc;
+      padding: 10px;
+      border-radius: 6px;
+      border-left: 4px solid #2563eb;
+    }
+
+    .hotel-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f172a;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .star-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .star-select {
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      padding: 2px 4px;
+      font-size: 12px;
+      color: #d97706;
+      font-weight: 600;
+      cursor: pointer;
+      background: white;
+      outline: none;
+    }
+
+    .rating-text {
+      font-size: 12px;
+      color: #475569;
+      font-weight: 600;
+    }
+
+    /* Info & Booking Details */
+    .info-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 12px;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .info-label {
+      font-weight: 600;
+      color: #64748b;
+    }
+
+    .info-val {
+      font-weight: 500;
+      color: #0f172a;
+    }
+
+    /* Structured Details Card */
+    .details-section {
+      background-color: #fafafa;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 10px;
+      margin-top: 4px;
+    }
+
+    .details-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: #2563eb;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .detail-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      margin-bottom: 6px;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 4px;
+    }
+
+    .detail-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .detail-key {
+      font-weight: 600;
+      color: #475569;
+    }
+
+    .detail-val {
+      color: #0f172a;
+      text-align: right;
+      font-weight: 500;
+    }
+
+    /* Total Price Row */
+    .price-container {
+      margin-top: 14px;
+      padding-top: 10px;
+      border-top: 2px dashed #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .price-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .price-amount {
+      font-size: 15px;
+      font-weight: 700;
+      color: #16a34a;
+    }
+
+    /* Footer Text */
+    .card-footer {
+      margin-top: 12px;
+      text-align: center;
+      font-size: 9px;
+      color: #94a3b8;
+      border-top: 1px solid #f1f5f9;
+      padding-top: 6px;
+    }
+
+    /* Print Rules */
+    @media print {
+      body {
+        background-color: #ffffff;
+        padding: 0;
+      }
+      .controls-wrapper {
+        display: none;
+      }
+      .hotel-card {
+        box-shadow: none;
+        border: 1px solid #000;
+        max-width: 100%;
+        width: 350px;
+      }
+      [contenteditable="true"] {
+        border-bottom: none;
+      }
+      .star-select {
+        border: none;
+        appearance: none;
+        -webkit-appearance: none;
+        background: transparent;
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Controls Section with Switchable Options -->
+  <div class="controls-wrapper">
+    <div class="request-type-toggle">
+      <button class="toggle-btn active" id="btnQuery" onclick="setMode('query')">1. Query Request</button>
+      <button class="toggle-btn" id="btnConfirm" onclick="setMode('confirm')">2. Confirmed Request</button>
+    </div>
+    <button class="btn-print" onclick="window.print()">🖨️ Print / Save PDF</button>
+  </div>
+
+  <!-- Hotel Request Voucher -->
+  <div class="hotel-card">
+    
+    <!-- Header with Logo & Dynamic Document Type Header -->
+    <div class="card-header">
+      <div class="logo-container">
+        <img src="logo.png" alt="Golder Tours & Travels">
+      </div>
+      <div class="doc-type" id="docTypeLabel">QUERY REQUEST</div>
+    </div>
+
+    <!-- Hotel Name & Star Rating -->
+    <div class="hotel-name-box">
+      <span class="hotel-name" contenteditable="true">Click to Enter Hotel Name</span>
+      <div class="star-wrapper">
+        <select class="star-select" id="starSelect" onchange="updateStarText()">
+          <option value="1">★</option>
+          <option value="2">★★</option>
+          <option value="3">★★★</option>
+          <option value="4">★★★★</option>
+          <option value="5" selected>★★★★★</option>
+        </select>
+        <span class="rating-text" id="starText">(5 Star)</span>
+      </div>
+    </div>
+
+    <!-- Check-in & Check-out Dates -->
+    <div class="info-group">
+      <div class="info-row">
+        <span class="info-label">Check-in Date:</span>
+        <span class="info-val" contenteditable="true">15 Oct, 2026</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Check-out Date:</span>
+        <span class="info-val" contenteditable="true">18 Oct, 2026</span>
+      </div>
+
+      <!-- Structured Booking Details -->
+      <div class="details-section">
+        <div class="details-title">Booking Details</div>
+        
+        <div class="detail-item">
+          <span class="detail-key">Guest Name:</span>
+          <span class="detail-val" contenteditable="true">Mr. Rahat Chowdhury</span>
+        </div>
+
+        <div class="detail-item">
+          <span class="detail-key">Room Type:</span>
+          <span class="detail-val" contenteditable="true">Deluxe Double Room</span>
+        </div>
+
+        <div class="detail-item">
+          <span class="detail-key">Inclusion:</span>
+          <span class="detail-val" contenteditable="true">Breakfast Included</span>
+        </div>
+
+        <div class="detail-item">
+          <span class="detail-key">Status:</span>
+          <span class="detail-val" contenteditable="true" id="statusVal">Pending Rate Quote</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dynamic Price Section -->
+    <div class="price-container">
+      <span class="price-label" id="priceLabel">Requested Price Rate:</span>
+      <span class="price-amount" contenteditable="true" id="priceVal">SAR _____</span>
+    </div>
+
+    <!-- Footer -->
+    <div class="card-footer" id="footerText">
+      Official Rate Query Request • Golder Tours & Travels
+    </div>
+
+  </div>
+
+  <script>
+    // Star Dropdown text update logic
+    function updateStarText() {
+      const select = document.getElementById('starSelect');
+      const starText = document.getElementById('starText');
+      starText.textContent = `(${select.value} Star)`;
+    }
+
+    // Toggle Mode Logic
+    function setMode(mode) {
+      const btnQuery = document.getElementById('btnQuery');
+      const btnConfirm = document.getElementById('btnConfirm');
+      const docTypeLabel = document.getElementById('docTypeLabel');
+      const statusVal = document.getElementById('statusVal');
+      const priceLabel = document.getElementById('priceLabel');
+      const priceVal = document.getElementById('priceVal');
+      const footerText = document.getElementById('footerText');
+
+      if (mode === 'query') {
+        btnQuery.classList.add('active');
+        btnConfirm.classList.remove('active');
+
+        docTypeLabel.textContent = 'QUERY REQUEST';
+        statusVal.textContent = 'Pending Rate Quote';
+        priceLabel.textContent = 'Requested Price Rate:';
+        priceVal.textContent = 'SAR _____';
+        footerText.textContent = 'Official Rate Query Request • Golder Tours & Travels';
+      } else {
+        btnConfirm.classList.add('active');
+        btnQuery.classList.remove('active');
+
+        docTypeLabel.textContent = 'CONFIRMED REQUEST';
+        statusVal.textContent = 'Confirmed';
+        priceLabel.textContent = 'Agreed Price:';
+        priceVal.textContent = 'SAR 450';
+        footerText.textContent = 'Official Booking Confirmation • Golder Tours & Travels';
+      }
+    }
+  </script>
+
+</body>
+</html>
