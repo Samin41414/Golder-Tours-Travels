@@ -9,6 +9,9 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
     body { background-color: #f8fafc; padding: 30px 15px; display: flex; flex-direction: column; align-items: center; }
 
+    .back-btn-container { width: 100%; max-width: 750px; margin-bottom: 15px; }
+    .back-btn-container a { text-decoration: none; color: #0f172a; font-weight: 600; font-size: 14px; display: inline-flex; align-items: center; gap: 5px; }
+
     /* Action Controls */
     .action-controls { display: flex; gap: 10px; margin-bottom: 25px; }
     .btn { padding: 9px 16px; font-size: 13px; font-weight: 600; border: none; border-radius: 6px; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
@@ -29,21 +32,23 @@
       color: #1e293b;
     }
 
-    /* Watermark Stamp */
+    /* Watermark Stamp (Positioned below Due Amount / Bottom Right) */
     .stamp-paid {
       position: absolute;
-      bottom: 110px;
-      right: 50px;
+      bottom: 25px;
+      right: 40px;
       border: 3px solid #16a34a;
       color: #16a34a;
-      font-size: 26px;
+      font-size: 24px;
       font-weight: 800;
       padding: 4px 16px;
       border-radius: 6px;
-      transform: rotate(-12deg);
+      transform: rotate(-10deg);
       letter-spacing: 2px;
       display: none;
       pointer-events: none;
+      background-color: rgba(255, 255, 255, 0.9);
+      z-index: 10;
     }
     .stamp-paid.show { display: block; }
 
@@ -263,7 +268,7 @@
     @media print {
       * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
       body { background: white; padding: 0; }
-      .action-controls, .btn-del, .add-row-container { display: none !important; }
+      .action-controls, .btn-del, .add-row-container, .back-btn-container { display: none !important; }
       .invoice-card { box-shadow: none; padding: 0; width: 100%; max-width: 100%; }
       .num-in, [contenteditable="true"] { border-bottom: none !important; }
       .payment-instructions { background: #f8fafc !important; border: 1px solid #e2e8f0; }
@@ -271,6 +276,10 @@
   </style>
 </head>
 <body>
+
+  <div class="back-btn-container">
+    <a href="projects.html">&larr; Back to Projects</a>
+  </div>
 
   <!-- Controls Panel -->
   <div class="action-controls">
@@ -281,8 +290,6 @@
   <!-- Invoice Sheet -->
   <div class="invoice-card">
     
-    <div class="stamp-paid" id="paidStamp">PAID</div>
-
     <!-- Top Header -->
     <div class="top-header">
       <div class="brand-box">
@@ -426,7 +433,7 @@
           <td></td>
         </tr>
 
-        <!-- Due Row (Updated label) -->
+        <!-- Due Row -->
         <tr class="balance-row">
           <td class="t-label">DUE:</td>
           <td class="amount-cell">
@@ -440,10 +447,12 @@
       </tbody>
     </table>
 
+    <!-- Watermark Stamp placed at bottom right side -->
+    <div class="stamp-paid" id="paidStamp">PAID</div>
+
   </div>
 
   <script>
-    // Auto Generate Date and Invoice Number
     function setAutoFields() {
       const today = new Date();
       const options = { month: 'short', day: 'numeric', year: 'numeric' };
