@@ -1,156 +1,840 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Costing Data - Golder Tours & Travels</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Golder Tours & Travels - Cost Estimation & Quotation</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background: #f4f9f9; padding: 20px; color: #1e272e; }
-        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        h2 { color: #00a8cc; margin-bottom: 20px; text-align: center; }
-        
-        .form-group { margin-bottom: 15px; }
-        label { font-weight: 600; display: block; margin-bottom: 5px; }
-        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.95rem; }
-        
-        .btn-submit { background: #2d7a42; color: white; border: none; padding: 12px 25px; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%; font-size: 1rem; transition: 0.3s; margin-top: 10px; }
-        .btn-submit:hover { background: #00a8cc; }
-
-        /* Modal Overlay for Auto-Generated Receipt */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6);
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 600px;
-            position: relative;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            border: 2px solid #00a8cc;
-        }
-
-        .close-cross {
-            position: absolute;
-            top: 12px; right: 18px;
-            font-size: 28px;
-            font-weight: bold;
-            color: #e74c3c;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .close-cross:hover { transform: scale(1.2); color: #c0392b; }
-
-        .popup-receipt-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #00a8cc; padding-bottom: 10px; margin-bottom: 15px; }
-        .popup-receipt-header img { height: 50px; }
-        .popup-title { text-align: right; color: #ff7e37; font-size: 1.2rem; font-weight: bold; }
         
-        .receipt-info { font-size: 0.9rem; margin-bottom: 15px; line-height: 1.6; }
-        .receipt-info span { font-weight: bold; color: #00a8cc; }
-
-        .modal-btn { background: #00a8cc; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; margin-top: 15px; width: 100%; }
-        .modal-btn:hover { background: #2d7a42; }
+        @page {
+            size: auto;
+            margin: 10mm;
+        }
 
         @media print {
-            body * { visibility: hidden; }
-            .modal-content, .modal-content * { visibility: visible; }
-            .modal-content { position: absolute; left: 0; top: 0; width: 100%; border: 1px solid #000; }
-            .close-cross, .modal-btn { display: none !important; }
+            body {
+                background-color: #ffffff !important;
+                padding: 0 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            .container {
+                box-shadow: none !important;
+                padding: 0 !important;
+                max-width: 100% !important;
+                width: 100% !important;
+            }
+            .btn-add-row, .btn-delete, .action-buttons-wrapper, .back-btn-container {
+                display: none !important;
+            }
+            .action-col {
+                display: none !important;
+            }
+            .section-header {
+                background-color: #1a365d !important;
+                color: #ffffff !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            th {
+                background-color: #f7fafc !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            .subtotal-row td {
+                background-color: #edf2f7 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            .package-breakdown {
+                background-color: #ebf8ff !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            input, select {
+                border: none !important;
+                background: transparent !important;
+                appearance: none;
+                -webkit-appearance: none;
+                padding: 0 !important;
+                width: 100% !important;
+                font-size: 13px !important;
+                text-overflow: clip !important;
+                white-space: normal !important;
+            }
+            input[type="checkbox"] {
+                display: none !important;
+            }
+        }
+
+        body {
+            background-color: #eef2f5;
+            color: #333;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        .back-btn-container {
+            margin-bottom: 15px;
+        }
+
+        .back-btn-container a {
+            text-decoration: none;
+            color: #1a365d;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .company-header-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        .company-header-img {
+            max-width: 150px;
+            height: auto;
+        }
+
+        .quotation-date {
+            font-size: 14px;
+            font-weight: 600;
+            color: #4a5568;
+            background: #edf2f7;
+            padding: 6px 14px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e0;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #1a365d;
+            padding-bottom: 15px;
+            margin-bottom: 35px;
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 8px;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        .header h1 {
+            color: #1a365d;
+            font-size: 22px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .header h1 .rate-tag {
+            font-size: 13px;
+            text-transform: none;
+            letter-spacing: 0;
+            color: #dd6b20;
+            background: #feebc8;
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin-left: 8px;
+            vertical-align: middle;
+            font-weight: 600;
+        }
+        .header p {
+            color: #718096;
+            margin-top: 5px;
+            font-size: 13px;
+        }
+        
+        .section-header {
+            background-color: #1a365d !important;
+            color: #ffffff !important;
+            padding: 10px 16px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 6px 6px 0 0;
+            margin-top: 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .btn-add-row {
+            background-color: #38a169;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-add-row:hover {
+            background-color: #2f855a;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+            background: #fff;
+            table-layout: fixed;
+        }
+        
+        th, td {
+            padding: 10px 8px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 13px;
+            vertical-align: middle;
+            word-wrap: break-word;
+        }
+        
+        th {
+            background-color: #f7fafc !important;
+            color: #4a5568;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            border-top: 1px solid #e2e8f0;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        td input[type="text"], td input[type="number"], td select {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid #cbd5e0;
+            border-radius: 4px;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .checkbox-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #2b6cb0;
+            font-weight: 600;
+            user-select: none;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .btn-delete {
+            background-color: #e53e3e;
+            color: white;
+            border: none;
+            width: 26px;
+            height: 26px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .text-right { text-align: right; }
+        .text-center { text-align: center; }
+
+        .subtotal-row td {
+            font-weight: bold;
+            background-color: #edf2f7 !important;
+            color: #2d3748;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .summary-card {
+            margin-top: 40px;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 25px;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            font-size: 16px;
+            border-bottom: 1px dashed #cbd5e0;
+        }
+
+        .summary-row.grand-total {
+            border-bottom: none;
+            border-top: 2px solid #1a365d;
+            margin-top: 10px;
+            padding-top: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #1a365d;
+        }
+
+        .package-breakdown {
+            margin-top: 30px;
+            background: #ebf8ff !important;
+            border: 1px solid #bee3f8;
+            border-radius: 8px;
+            padding: 25px;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .package-breakdown h3 {
+            color: #2c5282;
+            margin-bottom: 20px;
+            font-size: 18px;
+            border-bottom: 2px solid #90cdf4;
+            padding-bottom: 8px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+
+        .card-box {
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .card-box label {
+            display: block;
+            font-size: 13px;
+            color: #4a5568;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .card-box .amount {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2b6cb0;
+        }
+
+        .action-buttons-wrapper {
+            margin-top: 35px;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .btn-action {
+            padding: 12px 28px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn-pdf {
+            background-color: #e53e3e;
+            color: #ffffff;
+        }
+        .btn-pdf:hover {
+            background-color: #c53030;
+        }
+
+        .btn-print {
+            background-color: #1a365d;
+            color: #ffffff;
+        }
+        .btn-print:hover {
+            background-color: #2a4365;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Costing Data Sheet</h2>
-    <form id="costingForm" onsubmit="handleFormSubmit(event)">
-        <div class="form-group">
-            <label>Project / Tour Name:</label>
-            <input type="text" id="projectName" placeholder="e.g. Cox's Bazar Tour Package" required>
-        </div>
-        <div class="form-group">
-            <label>Customer Name:</label>
-            <input type="text" id="clientName" placeholder="Customer Name" required>
-        </div>
-        <div class="form-group">
-            <label>Total Cost Amount (BDT):</label>
-            <input type="number" id="totalCost" placeholder="15000" required>
-        </div>
-        <div class="form-group">
-            <label>Payment Method:</label>
-            <select id="payMethod">
-                <option value="Cash">Cash</option>
-                <option value="bKash">bKash</option>
-                <option value="Bank Transfer">Bank Transfer</option>
-            </select>
-        </div>
-        <button type="submit" class="btn-submit">Save Costing & Auto-Generate Receipt</button>
-    </form>
-</div>
 
-<!-- Receipt Popup Modal -->
-<div class="modal-overlay" id="receiptModal">
-    <div class="modal-content">
-        <!-- Cross Button -->
-        <span class="close-cross" onclick="closeModal()">&times;</span>
-        
-        <div class="popup-receipt-header">
-            <img src="logo.png" alt="Golder Logo">
-            <div class="popup-title">ONLINE RECEIPT</div>
-        </div>
-
-        <div class="receipt-info">
-            <p><strong>Receipt No:</strong> <span id="popNo"></span></p>
-            <p><strong>Date:</strong> <span id="popDate"></span></p>
-            <p><strong>Customer:</strong> <span id="popClient"></span></p>
-            <p><strong>Project Details:</strong> <span id="popProject"></span></p>
-            <p><strong>Total Amount:</strong> <span id="popAmount"></span> BDT</p>
-            <p><strong>Payment Mode:</strong> <span id="popMethod"></span></p>
-        </div>
-
-        <button class="modal-btn" onclick="window.print()">Print / Save PDF (For Mail)</button>
+    <div class="back-btn-container">
+        <a href="projects.html">&larr; Back to Projects</a>
     </div>
+
+    <!-- Top Header Layout -->
+    <div class="company-header-wrapper">
+        <img src="logo.png" alt="Golder Tours & Travels Logo" class="company-header-img" id="main-header-logo">
+        <div class="quotation-date">
+            Date: <span id="current-date"></span>
+        </div>
+    </div>
+
+    <div class="header">
+        <h1>Travel Cost Estimation & Quotation <span class="rate-tag">(1 Saudi Riyal = 33.50 BDT)</span></h1>
+        <p>Interactive Budget & Calculation Sheet</p>
+    </div>
+
+    <!-- 1. Air Tickets and Visa -->
+    <div class="section-header">
+        <span>1. Air Tickets and Visa</span>
+        <button class="btn-add-row" onclick="addRow('air-visa-table')">+ Add Row</button>
+    </div>
+    <table id="air-visa-table">
+        <thead>
+            <tr>
+                <th style="width: 42%;">Details</th>
+                <th style="width: 10%;" class="text-center">PAX</th>
+                <th style="width: 14%;">Ticket / VISA</th>
+                <th style="width: 16%;" class="text-right">Price / Person (BDT)</th>
+                <th style="width: 13%;" class="text-right">Total Price (BDT)</th>
+                <th style="width: 5%;" class="text-center action-col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><input type="text" placeholder="Enter details"></td>
+                <td><input type="number" class="qty text-center" value="1" min="1"></td>
+                <td>
+                    <select>
+                        <option value="Both">Both</option>
+                        <option value="Ticket">Ticket</option>
+                        <option value="VISA">VISA</option>
+                    </select>
+                </td>
+                <td><input type="number" class="price-bdt text-right" placeholder="0"></td>
+                <td class="item-total text-right"><strong>0 BDT</strong></td>
+                <td class="text-center action-col"><button class="btn-delete" onclick="deleteRow(this)">✕</button></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr class="subtotal-row">
+                <td colspan="4" class="text-right">Subtotal (Air Tickets & Visa):</td>
+                <td class="subtotal text-right" id="air-subtotal">0 BDT</td>
+                <td class="action-col"></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <!-- 2. Hotels -->
+    <div class="section-header">
+        <span>2. Hotels</span>
+        <button class="btn-add-row" onclick="addRow('hotels-table')">+ Add Row</button>
+    </div>
+    <table id="hotels-table">
+        <thead>
+            <tr>
+                <th style="width: 34%;">Hotel Name & Location</th>
+                <th style="width: 18%;">Room Type</th>
+                <th style="width: 8%;" class="text-center">Nights</th>
+                <th style="width: 10%;" class="text-center">Quantity</th>
+                <th style="width: 12%;" class="text-right">Price (SAR)</th>
+                <th style="width: 13%;" class="text-right">Total Price</th>
+                <th style="width: 5%;" class="text-center action-col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><input type="text" placeholder="Hotel Name & Location"></td>
+                <td><input type="text" placeholder="Room Type"></td>
+                <td><input type="number" class="nights text-center" value="1" min="1"></td>
+                <td><input type="number" class="qty text-center" value="1" min="1"></td>
+                <td><input type="number" class="price text-right" placeholder="0"></td>
+                <td class="item-total text-right"><strong>0 BDT</strong></td>
+                <td class="text-center action-col"><button class="btn-delete" onclick="deleteRow(this)">✕</button></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr class="subtotal-row">
+                <td colspan="5" class="text-right">Subtotal (Hotels):</td>
+                <td class="subtotal text-right" id="hotel-subtotal">0 BDT</td>
+                <td class="action-col"></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <!-- 3. Transport -->
+    <div class="section-header">
+        <span>3. Transport</span>
+        <button class="btn-add-row" onclick="addRow('transport-table')">+ Add Row</button>
+    </div>
+    <table id="transport-table">
+        <thead>
+            <tr>
+                <th style="width: 42%;">Route</th>
+                <th style="width: 20%;">Transport Type</th>
+                <th style="width: 8%;" class="text-center">Vehicles</th>
+                <th style="width: 12%;" class="text-right">Price (SAR)</th>
+                <th style="width: 13%;" class="text-right">Total Price</th>
+                <th style="width: 5%;" class="text-center action-col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><input type="text" placeholder="Route Details"></td>
+                <td><input type="text" placeholder="Transport Type"></td>
+                <td><input type="number" class="qty text-center" value="1" min="1"></td>
+                <td><input type="number" class="price text-right" placeholder="0"></td>
+                <td class="item-total text-right"><strong>0 BDT</strong></td>
+                <td class="text-center action-col"><button class="btn-delete" onclick="deleteRow(this)">✕</button></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr class="subtotal-row">
+                <td colspan="4" class="text-right">Subtotal (Transport):</td>
+                <td class="subtotal text-right" id="transport-subtotal">0 BDT</td>
+                <td class="action-col"></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <!-- 4. Food & Tour -->
+    <div class="section-header">
+        <span>4. Food & Tour</span>
+        <button class="btn-add-row" onclick="addRow('food-tour-table')">+ Add Row</button>
+    </div>
+    <table id="food-tour-table">
+        <thead>
+            <tr>
+                <th style="width: 62%;">Details</th>
+                <th style="width: 20%;" class="text-right">Price (SAR)</th>
+                <th style="width: 13%;" class="text-right">Total Price</th>
+                <th style="width: 5%;" class="text-center action-col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><input type="text" placeholder="Enter Details"></td>
+                <td><input type="number" class="price text-right" placeholder="0"></td>
+                <td class="item-total text-right"><strong>0 BDT</strong></td>
+                <td class="text-center action-col"><button class="btn-delete" onclick="deleteRow(this)">✕</button></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr class="subtotal-row">
+                <td colspan="2" class="text-right">Subtotal (Food & Tour):</td>
+                <td class="subtotal text-right" id="food-subtotal">0 BDT</td>
+                <td class="action-col"></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <!-- 5. GTT Margin -->
+    <div class="section-header">
+        <span>5. GTT Margin</span>
+    </div>
+    <table>
+        <tbody>
+            <tr>
+                <td style="font-weight: 600; color: #1a365d; width: 45%;">Profit Margin Amount (BDT)</td>
+                <td style="width: 25%;">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="multiply-pax-check" onchange="calculateAll()">
+                        Multiply by Total PAX
+                    </label>
+                </td>
+                <td style="width: 30%;">
+                    <input type="number" id="gtt-margin" class="text-right" placeholder="Enter Amount in BDT" style="font-weight: bold; color: #2b6cb0;">
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Grand Total Area -->
+    <div class="summary-card">
+        <div class="summary-row">
+            <span>Air Tickets & Visa Subtotal:</span>
+            <span id="summary-air">0 BDT</span>
+        </div>
+        <div class="summary-row">
+            <span>Hotels Subtotal:</span>
+            <span id="summary-hotel">0 BDT</span>
+        </div>
+        <div class="summary-row">
+            <span>Transport Subtotal:</span>
+            <span id="summary-transport">0 BDT</span>
+        </div>
+        <div class="summary-row">
+            <span>Food & Tour Subtotal:</span>
+            <span id="summary-food">0 BDT</span>
+        </div>
+        <div class="summary-row">
+            <span>GTT Margin:</span>
+            <span id="summary-margin">0 BDT</span>
+        </div>
+        <div class="summary-row grand-total">
+            <span>GRAND TOTAL</span>
+            <span id="grand-total">0 BDT</span>
+        </div>
+    </div>
+
+    <!-- Final Package Breakdown -->
+    <div class="package-breakdown">
+        <h3>Final Package Cost Breakdown</h3>
+        <div class="grid-3">
+            <div class="card-box">
+                <label for="pax-count">Total Persons (PAX)</label>
+                <input type="number" id="pax-count" value="1" min="1" style="font-size: 18px; font-weight: bold; padding: 5px;" oninput="calculateAll()">
+            </div>
+            <div class="card-box">
+                <label>Package Cost (Per Person)</label>
+                <div class="amount" id="per-person-cost">0 BDT</div>
+            </div>
+            <div class="card-box">
+                <label>Total Package Cost (All Persons)</label>
+                <div class="amount" id="total-group-cost">0 BDT</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Action Buttons -->
+    <div class="action-buttons-wrapper">
+        <button class="btn-action btn-pdf" onclick="exportToPDF()">
+            📄 Download PDF
+        </button>
+        <button class="btn-action btn-print" onclick="triggerPrint()">
+            🖨️ Print Quotation
+        </button>
+    </div>
+
 </div>
 
 <script>
-    function handleFormSubmit(e) {
-        e.preventDefault();
+    const SAR_TO_BDT = 33.50;
 
-        // 1. Get Values
-        let project = document.getElementById('projectName').value;
-        let client = document.getElementById('clientName').value;
-        let cost = document.getElementById('totalCost').value;
-        let method = document.getElementById('payMethod').value;
-        let receiptNo = "GTT-" + Math.floor(1000 + Math.random() * 9000);
-        let today = new Date().toLocaleDateString();
-
-        // 2. Populate Popup
-        document.getElementById('popNo').innerText = receiptNo;
-        document.getElementById('popDate').innerText = today;
-        document.getElementById('popClient').innerText = client;
-        document.getElementById('popProject').innerText = project;
-        document.getElementById('popAmount').innerText = parseFloat(cost).toLocaleString('en-IN');
-        document.getElementById('popMethod').innerText = method;
-
-        // 3. Display Modal
-        document.getElementById('receiptModal').style.display = 'flex';
+    function setCurrentDate() {
+        const today = new Date();
+        const options = { year: 'numeric', month: 'short', day: 'numeric' };
+        document.getElementById('current-date').innerText = today.toLocaleDateString('en-US', options);
     }
 
-    // Close Modal via Cross (❌) Button
-    function closeModal() {
-        document.getElementById('receiptModal').style.display = 'none';
-        document.getElementById('costingForm').reset();
+    function formatCurrencyBDT(amountInBDT) {
+        return amountInBDT.toLocaleString('en-IN', { maximumFractionDigits: 2, minimumFractionDigits: 0 }) + ' BDT';
     }
+
+    function calculateAirVisaSection() {
+        const table = document.getElementById('air-visa-table');
+        const rows = table.querySelectorAll('tbody tr');
+        let sectionSubtotalBDT = 0;
+
+        rows.forEach(row => {
+            const qtyInput = row.querySelector('.qty');
+            const priceInput = row.querySelector('.price-bdt');
+            const itemTotalTd = row.querySelector('.item-total');
+
+            const qty = qtyInput ? (parseFloat(qtyInput.value) || 0) : 1;
+            const priceBDT = priceInput ? (parseFloat(priceInput.value) || 0) : 0;
+            const lineTotalBDT = qty * priceBDT;
+
+            sectionSubtotalBDT += lineTotalBDT;
+            if (itemTotalTd) {
+                itemTotalTd.innerHTML = `<strong>${formatCurrencyBDT(lineTotalBDT)}</strong>`;
+            }
+        });
+
+        return sectionSubtotalBDT;
+    }
+
+    function calculateHotelSection() {
+        const table = document.getElementById('hotels-table');
+        const rows = table.querySelectorAll('tbody tr');
+        let sectionSubtotalSAR = 0;
+
+        rows.forEach(row => {
+            const nightsInput = row.querySelector('.nights');
+            const qtyInput = row.querySelector('.qty');
+            const priceInput = row.querySelector('.price');
+            const itemTotalTd = row.querySelector('.item-total');
+
+            const nights = nightsInput ? (parseFloat(nightsInput.value) || 0) : 1;
+            const qty = qtyInput ? (parseFloat(qtyInput.value) || 0) : 1;
+            const priceSAR = priceInput ? (parseFloat(priceInput.value) || 0) : 0;
+            
+            const lineTotalSAR = nights * qty * priceSAR;
+            const lineTotalBDT = lineTotalSAR * SAR_TO_BDT;
+
+            sectionSubtotalSAR += lineTotalSAR;
+            if (itemTotalTd) {
+                itemTotalTd.innerHTML = `<strong>${formatCurrencyBDT(lineTotalBDT)}</strong> <br><small style="color:#718096; font-weight:normal;">(${lineTotalSAR.toLocaleString('en-US')} SAR)</small>`;
+            }
+        });
+
+        return sectionSubtotalSAR * SAR_TO_BDT;
+    }
+
+    function calculateSection(tableId) {
+        const table = document.getElementById(tableId);
+        const rows = table.querySelectorAll('tbody tr');
+        let sectionSubtotalSAR = 0;
+
+        rows.forEach(row => {
+            const qtyInput = row.querySelector('.qty');
+            const priceInput = row.querySelector('.price');
+            const itemTotalTd = row.querySelector('.item-total');
+
+            const qty = qtyInput ? (parseFloat(qtyInput.value) || 0) : 1;
+            const priceSAR = priceInput ? (parseFloat(priceInput.value) || 0) : 0;
+            const lineTotalSAR = qty * priceSAR;
+            const lineTotalBDT = lineTotalSAR * SAR_TO_BDT;
+
+            sectionSubtotalSAR += lineTotalSAR;
+            if (itemTotalTd) {
+                itemTotalTd.innerHTML = `<strong>${formatCurrencyBDT(lineTotalBDT)}</strong> <br><small style="color:#718096; font-weight:normal;">(${lineTotalSAR.toLocaleString('en-US')} SAR)</small>`;
+            }
+        });
+
+        return sectionSubtotalSAR * SAR_TO_BDT;
+    }
+
+    function calculateAll() {
+        const airSubtotalBDT = calculateAirVisaSection();
+        const hotelSubtotalBDT = calculateHotelSection();
+        const transportSubtotalBDT = calculateSection('transport-table');
+        const foodSubtotalBDT = calculateSection('food-tour-table');
+        
+        const airVisaQtyInputs = document.querySelectorAll('#air-visa-table tbody .qty');
+        let topPaxCount = 0;
+        airVisaQtyInputs.forEach(input => {
+            topPaxCount += (parseFloat(input.value) || 0);
+        });
+        if (topPaxCount <= 0) topPaxCount = 1;
+
+        const paxInput = document.getElementById('pax-count');
+        if (paxInput) {
+            paxInput.value = topPaxCount;
+        }
+
+        const marginInput = document.getElementById('gtt-margin');
+        const baseMargin = marginInput ? (parseFloat(marginInput.value) || 0) : 0;
+        const multiplyCheckbox = document.getElementById('multiply-pax-check');
+
+        let gttMarginBDT = baseMargin;
+        if (multiplyCheckbox && multiplyCheckbox.checked) {
+            gttMarginBDT = baseMargin * topPaxCount;
+        }
+
+        document.getElementById('air-subtotal').innerText = formatCurrencyBDT(airSubtotalBDT);
+        document.getElementById('hotel-subtotal').innerText = formatCurrencyBDT(hotelSubtotalBDT);
+        document.getElementById('transport-subtotal').innerText = formatCurrencyBDT(transportSubtotalBDT);
+        document.getElementById('food-subtotal').innerText = formatCurrencyBDT(foodSubtotalBDT);
+
+        document.getElementById('summary-air').innerText = formatCurrencyBDT(airSubtotalBDT);
+        document.getElementById('summary-hotel').innerText = formatCurrencyBDT(hotelSubtotalBDT);
+        document.getElementById('summary-transport').innerText = formatCurrencyBDT(transportSubtotalBDT);
+        document.getElementById('summary-food').innerText = formatCurrencyBDT(foodSubtotalBDT);
+        
+        if (multiplyCheckbox && multiplyCheckbox.checked) {
+            document.getElementById('summary-margin').innerText = `${formatCurrencyBDT(gttMarginBDT)} (${baseMargin} BDT × ${topPaxCount} PAX)`;
+        } else {
+            document.getElementById('summary-margin').innerText = formatCurrencyBDT(gttMarginBDT);
+        }
+
+        const grandTotalBDT = airSubtotalBDT + hotelSubtotalBDT + transportSubtotalBDT + foodSubtotalBDT + gttMarginBDT;
+        document.getElementById('grand-total').innerText = formatCurrencyBDT(grandTotalBDT);
+
+        const perPersonCostBDT = grandTotalBDT / topPaxCount;
+
+        document.getElementById('per-person-cost').innerText = formatCurrencyBDT(Math.round(perPersonCostBDT));
+        document.getElementById('total-group-cost').innerText = formatCurrencyBDT(grandTotalBDT);
+    }
+
+    function addRow(tableId) {
+        const tableBody = document.getElementById(tableId).querySelector('tbody');
+        const newRow = document.createElement('tr');
+
+        if (tableId === 'air-visa-table') {
+            newRow.innerHTML = `
+                <td><input type="text" placeholder="Enter details"></td>
+                <td><input type="number" class="qty text-center" value="1" min="1"></td>
+                <td>
+                    <select>
+                        <option value="Both">Both</option>
+                        <option value="Ticket">Ticket</option>
+                        <option value="VISA">VISA</option>
+                    </select>
+                </td>
+                <td><input type="number" class="price-bdt text-right" placeholder="0"></td>
+                <td class="item-total text-right"><strong>0 BDT</strong></td>
+                <td class="text-center action-col"><button class="btn-delete" onclick="deleteRow(this)">✕</button></td>
+            `;
+        } else if (tableId === 'hotels-table') {
+            newRow.innerHTML = `
+                <td><input type="text" placeholder="Hotel Name & Location"></td>
+                <td><input type="text" placeholder="Room Type"></td>
+                <td><input type="number" class="nights text-center" value="1" min="1"></td>
+                <td><input type="number" class="qty text-center" value="1" min="1"></td>
+                <td><input type="number" class="price text-right" placeholder="0"></td>
+                <td class="item-total text-right"><strong>0 BDT</strong></td>
+                <td class="text-center action-col"><button class="btn-delete" onclick="deleteRow(this)">✕</button></td>
+            `;
+        } else if (tableId === 'transport-table') {
+            newRow.innerHTML = `
+                <td><input type="text" placeholder="Route Details"></td>
+                <td><input type="text" placeholder="Transport Type"></td>
+                <td><input type="number" class="qty text-center" value="1" min="1"></td>
+                <td><input type="number" class="price text-right" placeholder="0"></td>
+                <td class="item-total text-right"><strong>0 BDT</strong></td>
+                <td class="text-center action-col"><button class="btn-delete" onclick="deleteRow(this)">✕</button></td>
+            `;
+        } else if (tableId === 'food-tour-table') {
+            newRow.innerHTML = `
+                <td><input type="text" placeholder="Enter Details"></td>
+                <td><input type="number" class="price text-right" placeholder="0"></td>
+                <td class="item-total text-right"><strong>0 BDT</strong></td>
+                <td class="text-center action-col"><button class="btn-delete" onclick="deleteRow(this)">✕</button></td>
+            `;
+        }
+
+        tableBody.appendChild(newRow);
+        calculateAll();
+    }
+
+    function deleteRow(button) {
+        const row = button.closest('tr');
+        row.remove();
+        calculateAll();
+    }
+
+    function triggerPrint() {
+        window.print();
+    }
+
+    function exportToPDF() {
+        window.print();
+    }
+
+    document.addEventListener('input', calculateAll);
+    window.onload = function() {
+        setCurrentDate();
+        calculateAll();
+    };
 </script>
 
 </body>
