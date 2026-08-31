@@ -24,6 +24,8 @@
             margin-bottom: 25px;
             border-bottom: 2px solid #f0f0f0;
             padding-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
         .report-header h2 {
             font-size: 24px;
@@ -31,6 +33,11 @@
         }
         .report-header h2 span {
             color: #007bff;
+        }
+        .action-btns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         .action-btns button, .action-btns a {
             background: #007bff;
@@ -40,7 +47,6 @@
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
-            margin-left: 10px;
             text-decoration: none;
             display: inline-block;
             transition: 0.3s;
@@ -66,6 +72,12 @@
         }
         .action-btns button.unsave-btn:hover {
             background: #c82333;
+        }
+        .action-btns button.download-btn {
+            background: #17a2b8;
+        }
+        .action-btns button.download-btn:hover {
+            background: #138496;
         }
         .month-selector {
             margin-bottom: 20px;
@@ -200,6 +212,7 @@
         <div class="report-header">
             <h2>Golder Tours & Travels - <span id="reportTitleYear">Sales & Monthly Target Review (2026)</span></h2>
             <div class="action-btns">
+                <button class="download-btn" onclick="downloadDailySalesCSV()">📥 Download Daily Data (CSV)</button>
                 <button class="lock-btn" id="lockTargetBtn" onclick="toggleTargetLock()">Lock Target</button>
                 <button class="unsave-btn" onclick="unsaveReportData()">Reset Data</button>
                 <button class="print-btn" onclick="window.print()">Print / Save PDF</button>
@@ -299,7 +312,7 @@
                     <td class="profit">৳0</td>
                     <td class="achievement">0%</td>
                 </tr>
-            </thead>
+            </tbody>
             <tfoot>
                 <tr style="font-weight: bold; background: #f1f3f5;">
                     <td>Total / Summary</td>
@@ -501,6 +514,42 @@
             }
 
             calculateReport();
+        }
+
+        // New function to download daily entries as a CSV file
+        function downloadDailySalesCSV() {
+            const month = document.getElementById("reportMonth").value;
+            // Assuming daily entries are stored in localStorage as an array or object under 'golder_daily_entries_' + month
+            // Adjust the key according to how your daily-entry.html saves data.
+            const dailyData = JSON.parse(localStorage.getItem('golder_daily_entries_' + month)) || [];
+
+            if (dailyData.length === 0) {
+                alert("No daily sales entries found for " + month + " 2026 to download!");
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,";
+            // Define CSV Headers (Customize keys based on your daily entry structure)
+            csvContent += "Date,Service Name,Customer Name,Amount (BDT),Details\r\n";
+
+            dailyData.forEach(item => {
+                let row = [
+                    item.date || '',
+                    `"${item.service || ''}"`,
+                    `"${item.customer || ''}"`,
+                    item.amount || 0,
+                    `"${item.details || ''}"`
+                ];
+                csvContent += row.join(",") + "\r\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Golder_Tours_Daily_Sales_${month}_2026.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
         function unsaveReportData() {

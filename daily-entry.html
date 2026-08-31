@@ -132,7 +132,7 @@
         <div class="report-header">
             <h2>Golder Tours & Travels - <span>Daily Sales Entry (2026)</span></h2>
             <div class="action-btns-group">
-                <button class="action-btn delete-btn" onclick="clearDailyData()">Delete All Saved Data</button>
+                <button class="action-btn delete-btn" onclick="clearDailyData()">Clear All Data</button>
                 <button class="action-btn" onclick="saveDailyData()">Save Daily Entries</button>
             </div>
         </div>
@@ -179,7 +179,7 @@
         </div>
 
         <div style="text-align: right;">
-            <a href="sales-report.html" class="action-btn" style="background: #17a2b8;">Go to Monthly Report to Check Summary</a>
+            <a href="sales-report.html" class="action-btn" style="background: #17a2b8;">Go to Monthly Report</a>
         </div>
     </div>
 
@@ -193,10 +193,10 @@
             let serviceOptions = services.map(s => `<option value="${s}" ${s === service ? 'selected' : ''}>${s}</option>`).join('');
 
             tr.innerHTML = `
-                <td><input type="date" class="row-date" value="${date}"></td>
-                <td><select class="row-service">${serviceOptions}</select></td>
-                <td><input type="text" class="row-details" placeholder="Client Name / Remarks" value="${details}"></td>
-                <td><input type="number" class="row-amount" value="${amount}" oninput="calculateDailyTotal()"></td>
+                <td><input type="date" class="row-date" value="${date}" oninput="autoSaveOnChange()"></td>
+                <td><select class="row-service" onchange="autoSaveOnChange()">${serviceOptions}</select></td>
+                <td><input type="text" class="row-details" placeholder="Client Name / Remarks" value="${details}" oninput="autoSaveOnChange()"></td>
+                <td><input type="number" class="row-amount" value="${amount}" oninput="calculateDailyTotal(); autoSaveOnChange();"></td>
                 <td><button class="delete-row-btn" onclick="removeRow(this)">Delete</button></td>
             `;
             tbody.appendChild(tr);
@@ -206,8 +206,7 @@
         function removeRow(btn) {
             btn.closest('tr').remove();
             calculateDailyTotal();
-            // রো ডিলিট করার পর সাথে সাথে সেভ ও আপডেট করে দেবো যাতে মান্থলি রিপোর্টে ইফেক্ট পড়ে
-            saveDailyDataSilently();
+            autoSaveOnChange();
         }
 
         function calculateDailyTotal() {
@@ -243,28 +242,27 @@
             localStorage.setItem('golder_daily_entries_' + month, JSON.stringify(data.rows));
             localStorage.setItem('golder_auto_sales_' + month, JSON.stringify(data.serviceTotals));
 
-            alert("Daily sales saved successfully for " + month + " 2026! Monthly report updated.");
+            alert("Daily sales entries saved permanently for " + month + " 2026!");
         }
 
-        // রো ডিলিট করার সময় স্বয়ংক্রিয়ভাবে ব্যাকগ্রাউন্ডে ডাটা আপডেট করার জন্য
-        function saveDailyDataSilently() {
+        // টাইপ করা বা ডিলিট করার সাথে সাথেই অটো-সেভ হয়ে যাবে যাতে ডাটা হারিয়ে না যায়
+        function autoSaveOnChange() {
             const month = document.getElementById("entryMonth").value;
             const data = collectTableData();
-
             localStorage.setItem('golder_daily_entries_' + month, JSON.stringify(data.rows));
             localStorage.setItem('golder_auto_sales_' + month, JSON.stringify(data.serviceTotals));
         }
 
         function clearDailyData() {
             const month = document.getElementById("entryMonth").value;
-            if (confirm("Are you sure you want to delete all daily entries and reset Actual Sales for " + month + " 2026?")) {
+            if (confirm("Are you sure you want to clear all data and reset Actual Sales for " + month + " 2026?")) {
                 localStorage.removeItem('golder_daily_entries_' + month);
                 localStorage.removeItem('golder_auto_sales_' + month);
 
                 document.getElementById("dailyTableBody").innerHTML = "";
                 addRow('', 'Umrah', '', '');
                 calculateDailyTotal();
-                alert("All saved daily data deleted successfully for " + month + " 2026!");
+                alert("All data cleared successfully for " + month + " 2026!");
             }
         }
 
