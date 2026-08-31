@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales & Monthly Target Review - Golder Tours & Travels</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js for Visual Graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .report-container {
+            max-width: 1100px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 15px;
+        }
+        .report-header h2 {
+            font-size: 24px;
+            color: #333;
+        }
+        .report-header h2 span {
+            color: #007bff;
+        }
+        .action-btns button {
+            background: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-left: 10px;
+            transition: 0.3s;
+        }
+        .action-btns button:hover {
+            background: #0056b3;
+        }
+        .action-btns button.print-btn {
+            background: #28a745;
+        }
+        .action-btns button.print-btn:hover {
+            background: #218838;
+        }
+        .action-btns button.unsave-btn {
+            background: #dc3545;
+        }
+        .action-btns button.unsave-btn:hover {
+            background: #c82333;
+        }
+        .month-selector {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+        .month-selector select {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+        table.report-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        table.report-table th, table.report-table td {
+            border: 1px solid #e0e0e0;
+            padding: 12px 15px;
+            text-align: center;
+            font-size: 14px;
+        }
+        table.report-table th {
+            background-color: #f8f9fa;
+            color: #333;
+            font-weight: 600;
+        }
+        table.report-table input {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 14px;
+        }
+        .profit-pos {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .profit-neg {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .summary-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 5px solid #007bff;
+            text-align: left;
+        }
+        .summary-card h4 {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        .summary-card p {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+        }
+        .chart-box {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            margin-top: 30px;
+        }
+        .chart-box h3 {
+            font-size: 16px;
+            color: #444;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        /* Print Styles */
+        @media print {
+            body {
+                background: #fff;
+            }
+            .action-btns, footer, .chart-box {
+                display: none !important;
+            }
+            header {
+                display: block !important;
+                border-bottom: 1px solid #ddd;
+                margin-bottom: 20px;
+                padding-bottom: 10px;
+            }
+            .navbar {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .navbar nav {
+                display: none !important;
+            }
+            .report-container {
+                box-shadow: none;
+                margin: 0;
+                padding: 0;
+                width: 100%;
+            }
+            table.report-table input {
+                border: none;
+                background: transparent;
+                -webkit-appearance: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container navbar">
+            <div class="logo">
+                <img src="logo.png" alt="Golder Tours & Travels Logo" style="max-height: 50px;">
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="projects.html" class="active-link">Projects</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="report-container">
+        <div class="report-header">
+            <h2>Golder Tours & Travels - <span id="reportTitleYear">Sales & Monthly Target Review (2026)</span></h2>
+            <div class="action-btns">
+                <button onclick="saveData()">Save Data</button>
+                <button class="unsave-btn" onclick="unsaveData()">Delete Saved Data</button>
+                <button class="print-btn" onclick="window.print()">Print / Save PDF</button>
+            </div>
+        </div>
+
+        <div class="month-selector">
+            <label for="reportMonth">Select Month:</label>
+            <select id="reportMonth" onchange="loadData()">
+                <option value="January">January 2026</option>
+                <option value="February">February 2026</option>
+                <option value="March">March 2026</option>
+                <option value="April">April 2026</option>
+                <option value="May">May 2026</option>
+                <option value="June">June 2026</option>
+                <option value="July">July 2026</option>
+                <option value="August">August 2026</option>
+                <option value="September" selected>September 2026</option>
+                <option value="October">October 2026</option>
+                <option value="November">November 2026</option>
+                <option value="December">December 2026</option>
+            </select>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="summary-cards">
+            <div class="summary-card">
+                <h4>Total Monthly Target</h4>
+                <p id="sumTarget">৳0</p>
+            </div>
+            <div class="summary-card" style="border-left-color: #28a745;">
+                <h4>Total Sales / Revenue</h4>
+                <p id="sumSales">৳0</p>
+            </div>
+            <div class="summary-card" style="border-left-color: #ffc107;">
+                <h4>Net Gross Profit / Loss</h4>
+                <p id="sumProfit">৳0</p>
+            </div>
+            <div class="summary-card" style="border-left-color: #17a2b8;">
+                <h4>Target Achievement</h4>
+                <p id="sumAchievement">0%</p>
+            </div>
+        </div>
+
+        <!-- Data Table -->
+        <table class="report-table" id="salesTable">
+            <thead>
+                <tr>
+                    <th>Product / Service Name</th>
+                    <th>Monthly Target (৳)</th>
+                    <th>Actual Sales (৳)</th>
+                    <th>Gross Profit / Loss (৳)</th>
+                    <th>Target Achievement (%)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Umrah</td>
+                    <td><input type="number" class="target" value="" oninput="calculateReport()"></td>
+                    <td><input type="number" class="sales" value="" oninput="calculateReport()"></td>
+                    <td class="profit">৳0</td>
+                    <td class="achievement">0%</td>
+                </tr>
+                <tr>
+                    <td>Air Ticket</td>
+                    <td><input type="number" class="target" value="" oninput="calculateReport()"></td>
+                    <td><input type="number" class="sales" value="" oninput="calculateReport()"></td>
+                    <td class="profit">৳0</td>
+                    <td class="achievement">0%</td>
+                </tr>
+                <tr>
+                    <td>Hotel</td>
+                    <td><input type="number" class="target" value="" oninput="calculateReport()"></td>
+                    <td><input type="number" class="sales" value="" oninput="calculateReport()"></td>
+                    <td class="profit">৳0</td>
+                    <td class="achievement">0%</td>
+                </tr>
+                <tr>
+                    <td>Umrah Visa (Only)</td>
+                    <td><input type="number" class="target" value="" oninput="calculateReport()"></td>
+                    <td><input type="number" class="sales" value="" oninput="calculateReport()"></td>
+                    <td class="profit">৳0</td>
+                    <td class="achievement">0%</td>
+                </tr>
+                <tr>
+                    <td>Global Visa</td>
+                    <td><input type="number" class="target" value="" oninput="calculateReport()"></td>
+                    <td><input type="number" class="sales" value="" oninput="calculateReport()"></td>
+                    <td class="profit">৳0</td>
+                    <td class="achievement">0%</td>
+                </tr>
+                <tr>
+                    <td>Transport</td>
+                    <td><input type="number" class="target" value="" oninput="calculateReport()"></td>
+                    <td><input type="number" class="sales" value="" oninput="calculateReport()"></td>
+                    <td class="profit">৳0</td>
+                    <td class="achievement">0%</td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr style="font-weight: bold; background: #f1f3f5;">
+                    <td>Total / Summary</td>
+                    <td id="totalTarget">৳0</td>
+                    <td id="totalSales">৳0</td>
+                    <td id="totalProfit">৳0</td>
+                    <td id="totalAchv">0%</td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <!-- Bar Chart Section (Visible on Web Only) -->
+        <div class="chart-box">
+            <h3>Target vs Sales (Bar Chart Overview)</h3>
+            <canvas id="performanceChart" height="100"></canvas>
+        </div>
+
+        <!-- Line Chart Section (Visible on Web Only) -->
+        <div class="chart-box">
+            <h3>Trend Analysis (Line Chart Overview)</h3>
+            <canvas id="linePerformanceChart" height="100"></canvas>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Golder Tours & Travels. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        let myChart = null;
+        let myLineChart = null;
+
+        function calculateReport() {
+            const rows = document.querySelectorAll("#salesTable tbody tr");
+            let tTarget = 0, tSales = 0, tProfit = 0;
+
+            rows.forEach(row => {
+                const targetVal = parseFloat(row.querySelector(".target").value) || 0;
+                const salesVal = parseFloat(row.querySelector(".sales").value) || 0;
+                
+                let profitVal = targetVal - salesVal; 
+                let achv = targetVal > 0 ? ((salesVal / targetVal) * 100).toFixed(1) : 0;
+
+                tTarget += targetVal;
+                tSales += salesVal;
+                tProfit += profitVal;
+
+                const profitCell = row.querySelector(".profit");
+                profitCell.innerText = '৳' + profitVal.toLocaleString();
+                
+                if (profitVal < 0) {
+                    profitCell.className = 'profit profit-neg';
+                } else {
+                    profitCell.className = 'profit profit-pos';
+                }
+
+                row.querySelector(".achievement").innerText = achv + '%';
+            });
+
+            document.getElementById("sumTarget").innerText = '৳' + tTarget.toLocaleString();
+            document.getElementById("sumSales").innerText = '৳' + tSales.toLocaleString();
+            
+            const sumProfitEl = document.getElementById("sumProfit");
+            sumProfitEl.innerText = '৳' + tProfit.toLocaleString();
+            sumProfitEl.style.color = tProfit < 0 ? '#dc3545' : '#333';
+
+            let overallAchv = tTarget > 0 ? ((tSales / tTarget) * 100).toFixed(1) : 0;
+            document.getElementById("sumAchievement").innerText = overallAchv + '%';
+
+            document.getElementById("totalTarget").innerText = '৳' + tTarget.toLocaleString();
+            document.getElementById("totalSales").innerText = '৳' + tSales.toLocaleString();
+            
+            const totalProfitEl = document.getElementById("totalProfit");
+            totalProfitEl.innerText = '৳' + tProfit.toLocaleString();
+            totalProfitEl.style.color = tProfit < 0 ? '#dc3545' : '#333';
+
+            document.getElementById("totalAchv").innerText = overallAchv + '%';
+
+            updateCharts();
+        }
+
+        function updateCharts() {
+            const rows = document.querySelectorAll("#salesTable tbody tr");
+            let labels = [];
+            let targets = [];
+            let sales = [];
+
+            rows.forEach(row => {
+                labels.push(row.cells[0].innerText);
+                targets.push(parseFloat(row.querySelector(".target").value) || 0);
+                sales.push(parseFloat(row.querySelector(".sales").value) || 0);
+            });
+
+            // 1. Bar Chart Render
+            const ctxBar = document.getElementById('performanceChart').getContext('2d');
+            if (myChart) {
+                myChart.destroy();
+            }
+            myChart = new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Monthly Target (৳)',
+                            data: targets,
+                            backgroundColor: 'rgba(0, 123, 255, 0.6)',
+                            borderColor: 'rgba(0, 123, 255, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Actual Sales (৳)',
+                            data: sales,
+                            backgroundColor: 'rgba(40, 167, 69, 0.6)',
+                            borderColor: 'rgba(40, 167, 69, 1)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+
+            // 2. Line Chart Render
+            const ctxLine = document.getElementById('linePerformanceChart').getContext('2d');
+            if (myLineChart) {
+                myLineChart.destroy();
+            }
+            myLineChart = new Chart(ctxLine, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Target Trend (৳)',
+                            data: targets,
+                            borderColor: 'rgba(0, 123, 255, 1)',
+                            backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                            fill: false,
+                            tension: 0.3,
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'Sales Trend (৳)',
+                            data: sales,
+                            borderColor: 'rgba(40, 167, 69, 1)',
+                            backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                            fill: false,
+                            tension: 0.3,
+                            borderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        function saveData() {
+            const month = document.getElementById("reportMonth").value;
+            const rowsData = [];
+            document.querySelectorAll("#salesTable tbody tr").forEach(row => {
+                rowsData.push({
+                    target: row.querySelector(".target").value,
+                    sales: row.querySelector(".sales").value
+                });
+            });
+            localStorage.setItem('golder_sales_2026_' + month, JSON.stringify(rowsData));
+            alert("Data saved successfully for " + month + " 2026!");
+        }
+
+        function unsaveData() {
+            const month = document.getElementById("reportMonth").value;
+            if (confirm("Are you sure you want to delete the saved data for " + month + " 2026?")) {
+                localStorage.removeItem('golder_sales_2026_' + month);
+                
+                // Clear inputs
+                const rows = document.querySelectorAll("#salesTable tbody tr");
+                rows.forEach(row => {
+                    row.querySelector(".target").value = '';
+                    row.querySelector(".sales").value = '';
+                });
+                calculateReport();
+                alert("Saved data deleted successfully for " + month + " 2026!");
+            }
+        }
+
+        function loadData() {
+            const monthSelect = document.getElementById("reportMonth");
+            const month = monthSelect.value;
+            
+            // Update title with year
+            document.getElementById("reportTitleYear").innerText = `Sales & Monthly Target Review (${month} 2026)`;
+
+            const saved = localStorage.getItem('golder_sales_2026_' + month);
+            const rows = document.querySelectorAll("#salesTable tbody tr");
+
+            if (saved) {
+                const rowsData = JSON.parse(saved);
+                rows.forEach((row, index) => {
+                    if (rowsData[index]) {
+                        row.querySelector(".target").value = rowsData[index].target;
+                        row.querySelector(".sales").value = rowsData[index].sales;
+                    }
+                });
+            } else {
+                // If no data saved for this month, clear the inputs
+                rows.forEach(row => {
+                    row.querySelector(".target").value = '';
+                    row.querySelector(".sales").value = '';
+                });
+            }
+            calculateReport();
+        }
+
+        window.onload = function() {
+            loadData();
+        };
+    </script>
+</body>
+</html>
