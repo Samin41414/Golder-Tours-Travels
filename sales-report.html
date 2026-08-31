@@ -32,7 +32,7 @@
         .report-header h2 span {
             color: #007bff;
         }
-        .action-btns button {
+        .action-btns button, .action-btns a {
             background: #007bff;
             color: #fff;
             border: none;
@@ -41,9 +41,11 @@
             cursor: pointer;
             font-weight: 600;
             margin-left: 10px;
+            text-decoration: none;
+            display: inline-block;
             transition: 0.3s;
         }
-        .action-btns button:hover {
+        .action-btns button:hover, .action-btns a:hover {
             background: #0056b3;
         }
         .action-btns button.print-btn {
@@ -51,6 +53,13 @@
         }
         .action-btns button.print-btn:hover {
             background: #218838;
+        }
+        .action-btns button.lock-btn {
+            background: #ffc107;
+            color: #333;
+        }
+        .action-btns button.lock-btn:hover {
+            background: #e0a800;
         }
         .action-btns button.unsave-btn {
             background: #dc3545;
@@ -62,7 +71,7 @@
             margin-bottom: 20px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
             font-weight: 600;
         }
         .month-selector select {
@@ -94,6 +103,12 @@
             border-radius: 4px;
             text-align: center;
             font-size: 14px;
+        }
+        table.report-table input:disabled {
+            background-color: #e9ecef;
+            color: #495057;
+            font-weight: bold;
+            border: none;
         }
         .profit-pos {
             color: #28a745;
@@ -146,7 +161,7 @@
             body {
                 background: #fff;
             }
-            .action-btns, footer, .chart-box {
+            .action-btns, footer, .chart-box, .month-selector a {
                 display: none !important;
             }
             header {
@@ -154,14 +169,6 @@
                 border-bottom: 1px solid #ddd;
                 margin-bottom: 20px;
                 padding-bottom: 10px;
-            }
-            .navbar {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-            .navbar nav {
-                display: none !important;
             }
             .report-container {
                 box-shadow: none;
@@ -172,7 +179,6 @@
             table.report-table input {
                 border: none;
                 background: transparent;
-                -webkit-appearance: none;
             }
         }
     </style>
@@ -180,15 +186,12 @@
 <body>
 
     <header>
-        <div class="container navbar">
+        <div class="container navbar" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0;">
             <div class="logo">
                 <img src="logo.png" alt="Golder Tours & Travels Logo" style="max-height: 50px;">
             </div>
             <nav>
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="projects.html" class="active-link">Projects</a></li>
-                </ul>
+                <a href="daily-entry.html" style="background: #28a745; color: #fff; padding: 8px 15px; border-radius: 5px; text-decoration: none; font-weight: 600;">&larr; Back to Daily Sales Entry</a>
             </nav>
         </div>
     </header>
@@ -197,15 +200,15 @@
         <div class="report-header">
             <h2>Golder Tours & Travels - <span id="reportTitleYear">Sales & Monthly Target Review (2026)</span></h2>
             <div class="action-btns">
-                <button onclick="saveData()">Save Data</button>
-                <button class="unsave-btn" onclick="unsaveData()">Delete Saved Data</button>
+                <button class="lock-btn" id="lockTargetBtn" onclick="toggleTargetLock()">Lock Target</button>
+                <button class="unsave-btn" onclick="unsaveReportData()">Reset Data</button>
                 <button class="print-btn" onclick="window.print()">Print / Save PDF</button>
             </div>
         </div>
 
         <div class="month-selector">
             <label for="reportMonth">Select Month:</label>
-            <select id="reportMonth" onchange="loadData()">
+            <select id="reportMonth" onchange="loadReportData()">
                 <option value="January">January 2026</option>
                 <option value="February">February 2026</option>
                 <option value="March">March 2026</option>
@@ -219,6 +222,7 @@
                 <option value="November">November 2026</option>
                 <option value="December">December 2026</option>
             </select>
+            <span style="font-size: 13px; color: #666; font-weight: normal;">(Actual sales values are automatically updated from Daily Entries)</span>
         </div>
 
         <!-- Summary Cards -->
@@ -232,7 +236,7 @@
                 <p id="sumSales">৳0</p>
             </div>
             <div class="summary-card" style="border-left-color: #ffc107;">
-                <h4>Net Gross Profit / Loss</h4>
+                <h4>Net Gross Amount</h4>
                 <p id="sumProfit">৳0</p>
             </div>
             <div class="summary-card" style="border-left-color: #17a2b8;">
@@ -247,55 +251,55 @@
                 <tr>
                     <th>Product / Service Name</th>
                     <th>Monthly Target (৳)</th>
-                    <th>Actual Sales (৳)</th>
-                    <th>Gross Profit / Loss (৳)</th>
+                    <th>Actual Sales (৳) [Auto from Daily]</th>
+                    <th>Gross Amount (৳)</th>
                     <th>Target Achievement (%)</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
+                <tr data-service="Umrah">
                     <td>Umrah</td>
                     <td><input type="number" class="target" value="" oninput="calculateReport()"></td>
-                    <td><input type="number" class="sales" value="" oninput="calculateReport()"></td>
+                    <td><input type="number" class="sales" value="0" disabled></td>
                     <td class="profit">৳0</td>
                     <td class="achievement">0%</td>
                 </tr>
-                <tr>
+                <tr data-service="Air Ticket">
                     <td>Air Ticket</td>
                     <td><input type="number" class="target" value="" oninput="calculateReport()"></td>
-                    <td><input type="number" class="sales" value="" oninput="calculateReport()"></td>
+                    <td><input type="number" class="sales" value="0" disabled></td>
                     <td class="profit">৳0</td>
                     <td class="achievement">0%</td>
                 </tr>
-                <tr>
+                <tr data-service="Hotel">
                     <td>Hotel</td>
                     <td><input type="number" class="target" value="" oninput="calculateReport()"></td>
-                    <td><input type="number" class="sales" value="" oninput="calculateReport()"></td>
+                    <td><input type="number" class="sales" value="0" disabled></td>
                     <td class="profit">৳0</td>
                     <td class="achievement">0%</td>
                 </tr>
-                <tr>
+                <tr data-service="Umrah Visa (Only)">
                     <td>Umrah Visa (Only)</td>
                     <td><input type="number" class="target" value="" oninput="calculateReport()"></td>
-                    <td><input type="number" class="sales" value="" oninput="calculateReport()"></td>
+                    <td><input type="number" class="sales" value="0" disabled></td>
                     <td class="profit">৳0</td>
                     <td class="achievement">0%</td>
                 </tr>
-                <tr>
+                <tr data-service="Global Visa">
                     <td>Global Visa</td>
                     <td><input type="number" class="target" value="" oninput="calculateReport()"></td>
-                    <td><input type="number" class="sales" value="" oninput="calculateReport()"></td>
+                    <td><input type="number" class="sales" value="0" disabled></td>
                     <td class="profit">৳0</td>
                     <td class="achievement">0%</td>
                 </tr>
-                <tr>
+                <tr data-service="Transport">
                     <td>Transport</td>
                     <td><input type="number" class="target" value="" oninput="calculateReport()"></td>
-                    <td><input type="number" class="sales" value="" oninput="calculateReport()"></td>
+                    <td><input type="number" class="sales" value="0" disabled></td>
                     <td class="profit">৳0</td>
                     <td class="achievement">0%</td>
                 </tr>
-            </tbody>
+            </thead>
             <tfoot>
                 <tr style="font-weight: bold; background: #f1f3f5;">
                     <td>Total / Summary</td>
@@ -307,13 +311,13 @@
             </tfoot>
         </table>
 
-        <!-- Bar Chart Section (Visible on Web Only) -->
+        <!-- Bar Chart Section -->
         <div class="chart-box">
             <h3>Target vs Sales (Bar Chart Overview)</h3>
             <canvas id="performanceChart" height="100"></canvas>
         </div>
 
-        <!-- Line Chart Section (Visible on Web Only) -->
+        <!-- Line Chart Section -->
         <div class="chart-box">
             <h3>Trend Analysis (Line Chart Overview)</h3>
             <canvas id="linePerformanceChart" height="100"></canvas>
@@ -327,6 +331,7 @@
     <script>
         let myChart = null;
         let myLineChart = null;
+        let isTargetLocked = false;
 
         function calculateReport() {
             const rows = document.querySelectorAll("#salesTable tbody tr");
@@ -336,17 +341,17 @@
                 const targetVal = parseFloat(row.querySelector(".target").value) || 0;
                 const salesVal = parseFloat(row.querySelector(".sales").value) || 0;
                 
-                let profitVal = targetVal - salesVal; 
+                let grossVal = salesVal - targetVal; 
                 let achv = targetVal > 0 ? ((salesVal / targetVal) * 100).toFixed(1) : 0;
 
                 tTarget += targetVal;
                 tSales += salesVal;
-                tProfit += profitVal;
+                tProfit += grossVal;
 
                 const profitCell = row.querySelector(".profit");
-                profitCell.innerText = '৳' + profitVal.toLocaleString();
+                profitCell.innerText = '৳' + grossVal.toLocaleString();
                 
-                if (profitVal < 0) {
+                if (grossVal < 0) {
                     profitCell.className = 'profit profit-neg';
                 } else {
                     profitCell.className = 'profit profit-pos';
@@ -375,6 +380,7 @@
             document.getElementById("totalAchv").innerText = overallAchv + '%';
 
             updateCharts();
+            autoSaveMonthlyData();
         }
 
         function updateCharts() {
@@ -389,138 +395,130 @@
                 sales.push(parseFloat(row.querySelector(".sales").value) || 0);
             });
 
-            // 1. Bar Chart Render
             const ctxBar = document.getElementById('performanceChart').getContext('2d');
-            if (myChart) {
-                myChart.destroy();
-            }
+            if (myChart) myChart.destroy();
             myChart = new Chart(ctxBar, {
                 type: 'bar',
                 data: {
                     labels: labels,
                     datasets: [
-                        {
-                            label: 'Monthly Target (৳)',
-                            data: targets,
-                            backgroundColor: 'rgba(0, 123, 255, 0.6)',
-                            borderColor: 'rgba(0, 123, 255, 1)',
-                            borderWidth: 1
-                        },
-                        {
-                            label: 'Actual Sales (৳)',
-                            data: sales,
-                            backgroundColor: 'rgba(40, 167, 69, 0.6)',
-                            borderColor: 'rgba(40, 167, 69, 1)',
-                            borderWidth: 1
-                        }
+                        { label: 'Monthly Target (৳)', data: targets, backgroundColor: 'rgba(0, 123, 255, 0.6)', borderColor: 'rgba(0, 123, 255, 1)', borderWidth: 1 },
+                        { label: 'Actual Sales (৳)', data: sales, backgroundColor: 'rgba(40, 167, 69, 0.6)', borderColor: 'rgba(40, 167, 69, 1)', borderWidth: 1 }
                     ]
                 },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: { beginAtZero: true }
-                    }
-                }
+                options: { responsive: true, scales: { y: { beginAtZero: true } } }
             });
 
-            // 2. Line Chart Render
             const ctxLine = document.getElementById('linePerformanceChart').getContext('2d');
-            if (myLineChart) {
-                myLineChart.destroy();
-            }
+            if (myLineChart) myLineChart.destroy();
             myLineChart = new Chart(ctxLine, {
                 type: 'line',
                 data: {
                     labels: labels,
                     datasets: [
-                        {
-                            label: 'Target Trend (৳)',
-                            data: targets,
-                            borderColor: 'rgba(0, 123, 255, 1)',
-                            backgroundColor: 'rgba(0, 123, 255, 0.1)',
-                            fill: false,
-                            tension: 0.3,
-                            borderWidth: 2
-                        },
-                        {
-                            label: 'Sales Trend (৳)',
-                            data: sales,
-                            borderColor: 'rgba(40, 167, 69, 1)',
-                            backgroundColor: 'rgba(40, 167, 69, 0.1)',
-                            fill: false,
-                            tension: 0.3,
-                            borderWidth: 2
-                        }
+                        { label: 'Target Trend (৳)', data: targets, borderColor: 'rgba(0, 123, 255, 1)', backgroundColor: 'rgba(0, 123, 255, 0.1)', fill: false, tension: 0.3 },
+                        { label: 'Sales Trend (৳)', data: sales, borderColor: 'rgba(40, 167, 69, 1)', backgroundColor: 'rgba(40, 167, 69, 0.1)', fill: false, tension: 0.3 }
                     ]
                 },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: { beginAtZero: true }
-                    }
-                }
+                options: { responsive: true, scales: { y: { beginAtZero: true } } }
             });
         }
 
-        function saveData() {
+        function autoSaveMonthlyData() {
             const month = document.getElementById("reportMonth").value;
-            const rowsData = [];
+            const targets = {};
             document.querySelectorAll("#salesTable tbody tr").forEach(row => {
-                rowsData.push({
-                    target: row.querySelector(".target").value,
-                    sales: row.querySelector(".sales").value
-                });
+                const service = row.getAttribute("data-service");
+                const target = row.querySelector(".target").value;
+                targets[service] = target;
             });
-            localStorage.setItem('golder_sales_2026_' + month, JSON.stringify(rowsData));
-            alert("Data saved successfully for " + month + " 2026!");
+            localStorage.setItem('golder_targets_' + month, JSON.stringify(targets));
+            localStorage.setItem('golder_target_lock_' + month, isTargetLocked);
         }
 
-        function unsaveData() {
-            const month = document.getElementById("reportMonth").value;
-            if (confirm("Are you sure you want to delete the saved data for " + month + " 2026?")) {
-                localStorage.removeItem('golder_sales_2026_' + month);
-                
-                // Clear inputs
-                const rows = document.querySelectorAll("#salesTable tbody tr");
-                rows.forEach(row => {
-                    row.querySelector(".target").value = '';
-                    row.querySelector(".sales").value = '';
-                });
-                calculateReport();
-                alert("Saved data deleted successfully for " + month + " 2026!");
-            }
-        }
-
-        function loadData() {
-            const monthSelect = document.getElementById("reportMonth");
-            const month = monthSelect.value;
+        function toggleTargetLock() {
+            isTargetLocked = !isTargetLocked;
+            const targetInputs = document.querySelectorAll(".target");
+            const btn = document.getElementById("lockTargetBtn");
             
-            // Update title with year
+            targetInputs.forEach(input => {
+                input.disabled = isTargetLocked;
+            });
+
+            if (isTargetLocked) {
+                btn.innerText = "Unlock Target";
+                btn.style.background = "#28a745";
+                btn.style.color = "#fff";
+                alert("Monthly Target is now LOCKED.");
+            } else {
+                btn.innerText = "Lock Target";
+                btn.style.background = "#ffc107";
+                btn.style.color = "#333";
+                alert("Monthly Target is unlocked for editing.");
+            }
+            autoSaveMonthlyData();
+        }
+
+        function loadReportData() {
+            const month = document.getElementById("reportMonth").value;
             document.getElementById("reportTitleYear").innerText = `Sales & Monthly Target Review (${month} 2026)`;
 
-            const saved = localStorage.getItem('golder_sales_2026_' + month);
-            const rows = document.querySelectorAll("#salesTable tbody tr");
+            // 1. Load Auto Sales from Daily Entry
+            const autoSalesData = JSON.parse(localStorage.getItem('golder_auto_sales_' + month)) || {};
+            document.querySelectorAll("#salesTable tbody tr").forEach(row => {
+                const service = row.getAttribute("data-service");
+                const salesInput = row.querySelector(".sales");
+                salesInput.value = autoSalesData[service] || 0;
+            });
 
-            if (saved) {
-                const rowsData = JSON.parse(saved);
-                rows.forEach((row, index) => {
-                    if (rowsData[index]) {
-                        row.querySelector(".target").value = rowsData[index].target;
-                        row.querySelector(".sales").value = rowsData[index].sales;
-                    }
-                });
+            // 2. Load Targets
+            const savedTargets = JSON.parse(localStorage.getItem('golder_targets_' + month)) || {};
+            document.querySelectorAll("#salesTable tbody tr").forEach(row => {
+                const service = row.getAttribute("data-service");
+                const targetInput = row.querySelector(".target");
+                targetInput.value = savedTargets[service] !== undefined ? savedTargets[service] : '';
+            });
+
+            // 3. Load Lock Status
+            const savedLock = localStorage.getItem('golder_target_lock_' + month);
+            isTargetLocked = savedLock === 'true';
+            
+            const targetInputs = document.querySelectorAll(".target");
+            const btn = document.getElementById("lockTargetBtn");
+            
+            targetInputs.forEach(input => {
+                input.disabled = isTargetLocked;
+            });
+
+            if (isTargetLocked) {
+                btn.innerText = "Unlock Target";
+                btn.style.background = "#28a745";
+                btn.style.color = "#fff";
             } else {
-                // If no data saved for this month, clear the inputs
-                rows.forEach(row => {
-                    row.querySelector(".target").value = '';
-                    row.querySelector(".sales").value = '';
-                });
+                btn.innerText = "Lock Target";
+                btn.style.background = "#ffc107";
+                btn.style.color = "#333";
             }
+
             calculateReport();
         }
 
+        function unsaveReportData() {
+            const month = document.getElementById("reportMonth").value;
+            if (confirm("Are you sure you want to reset all data and targets for " + month + " 2026?")) {
+                localStorage.removeItem('golder_targets_' + month);
+                localStorage.removeItem('golder_target_lock_' + month);
+                localStorage.removeItem('golder_auto_sales_' + month);
+                localStorage.removeItem('golder_daily_entries_' + month);
+                
+                isTargetLocked = false;
+                loadReportData();
+                alert("Data has been successfully reset!");
+            }
+        }
+
         window.onload = function() {
-            loadData();
+            loadReportData();
         };
     </script>
 </body>
