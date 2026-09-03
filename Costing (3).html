@@ -719,17 +719,9 @@
         const transportSubtotalBDT = calculateSection('transport-table');
         const foodSubtotalBDT = calculateSection('food-tour-table');
         
-        const airVisaQtyInputs = document.querySelectorAll('#air-visa-table tbody .qty');
-        let topPaxCount = 0;
-        airVisaQtyInputs.forEach(input => {
-            topPaxCount += (parseFloat(input.value) || 0);
-        });
-        if (topPaxCount <= 0) topPaxCount = 1;
-
         const paxInput = document.getElementById('pax-count');
-        if (paxInput) {
-            paxInput.value = topPaxCount;
-        }
+        let currentPaxCount = paxInput ? (parseFloat(paxInput.value) || 0) : 1;
+        if (currentPaxCount <= 0) currentPaxCount = 1;
 
         const marginInput = document.getElementById('gtt-margin');
         const baseMargin = marginInput ? (parseFloat(marginInput.value) || 0) : 0;
@@ -737,7 +729,7 @@
 
         let gttMarginBDT = baseMargin;
         if (multiplyCheckbox && multiplyCheckbox.checked) {
-            gttMarginBDT = baseMargin * topPaxCount;
+            gttMarginBDT = baseMargin * currentPaxCount;
         }
 
         document.getElementById('air-subtotal').innerText = formatCurrencyBDT(airSubtotalBDT);
@@ -751,7 +743,7 @@
         document.getElementById('summary-food').innerText = formatCurrencyBDT(foodSubtotalBDT);
         
         if (multiplyCheckbox && multiplyCheckbox.checked) {
-            document.getElementById('summary-margin').innerText = `${formatCurrencyBDT(gttMarginBDT)} (${baseMargin} BDT × ${topPaxCount} PAX)`;
+            document.getElementById('summary-margin').innerText = `${formatCurrencyBDT(gttMarginBDT)} (${baseMargin} BDT × ${currentPaxCount} PAX)`;
         } else {
             document.getElementById('summary-margin').innerText = formatCurrencyBDT(gttMarginBDT);
         }
@@ -759,7 +751,7 @@
         const grandTotalBDT = airSubtotalBDT + hotelSubtotalBDT + transportSubtotalBDT + foodSubtotalBDT + gttMarginBDT;
         document.getElementById('grand-total').innerText = formatCurrencyBDT(grandTotalBDT);
 
-        const perPersonCostBDT = grandTotalBDT / topPaxCount;
+        const perPersonCostBDT = grandTotalBDT / currentPaxCount;
 
         document.getElementById('per-person-cost').innerText = formatCurrencyBDT(Math.round(perPersonCostBDT));
         document.getElementById('total-group-cost').innerText = formatCurrencyBDT(grandTotalBDT);
